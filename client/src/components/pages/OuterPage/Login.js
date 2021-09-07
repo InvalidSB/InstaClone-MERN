@@ -72,7 +72,7 @@ export default function Login() {
       setMessage("Email you just enter dosn't exist");
       return;
     }
-    fetch("http://localhost:5000/api/login", {
+    fetch("/api/login", {
       method: "post",
       headers: {
         "Content-Type": "application/json",

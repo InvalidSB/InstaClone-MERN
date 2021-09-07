@@ -14,7 +14,7 @@ function UserProfile() {
   const [showfollow, setShowFollow] = useState(state ? !state.following.includes(userId):true);
 
   useEffect(() => {
-    fetch(`http://localhost:5000/api/profile/${userId}`, {
+    fetch(`/api/profile/${userId}`, {
       method: "get",
       headers: {
         "Content-Type": "application/json",
@@ -30,7 +30,7 @@ function UserProfile() {
   }, []);
 
   const followUser = () => {
-    fetch("http://localhost:5000/api/follow", {
+    fetch("/api/follow", {
       method: "put",
       headers: {
         "Content-Type": "application/json",
@@ -65,7 +65,7 @@ function UserProfile() {
   // unfollow
 
   const unfollowUser = () => {
-    fetch("http://localhost:5000/api/unfollow", {
+    fetch("/api/unfollow", {
       method: "put",
       headers: {
         "Content-Type": "application/json",

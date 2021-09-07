@@ -108,7 +108,7 @@ export default function Register() {
       setMessage("Email you just enter dosn't exist");
       return;
     }
-    fetch("http://localhost:5000/api/register", {
+    fetch("/api/register", {
       method: "post",
       headers: {
         "Content-Type": "application/json",

@@ -162,7 +162,7 @@ function Home() {
 console.log(state)
   const [data, setData] = useState([]);
   useEffect(() => {
-    fetch("http://localhost:5000/api/allposts", {
+    fetch("/api/allposts", {
       method: "get",
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
@@ -176,7 +176,7 @@ console.log(state)
   }, []);
 
   const likePost = (id) => {
-    fetch("http://localhost:5000/api/likepost", {
+    fetch("/api/likepost", {
       method: "put",
       headers: {
         "Content-Type": "application/json",
@@ -199,7 +199,7 @@ console.log(state)
       });
   };
   const unLikePost = (id) => {
-    fetch("http://localhost:5000/api/unlikepost", {
+    fetch("/api/unlikepost", {
       method: "put",
       headers: {
         "Content-Type": "application/json",
@@ -225,7 +225,7 @@ console.log(state)
   const [cmnt, setCmnt] = useState();
 
   const comment = (text, postId) => {
-    fetch("http://localhost:5000/api/comment", {
+    fetch("/api/comment", {
       method: "put",
       headers: {
         "Content-Type": "application/json",
@@ -255,7 +255,7 @@ console.log(state)
 // delete functionality
 const deletePost=(postId)=>{
   console.log("delete garne ho yo post")
-  fetch(`http://localhost:5000/api/delete/${postId}`, {
+  fetch(`/api/delete/${postId}`, {
     method: "delete",
     headers: {
       Authorization: "Bearer " + localStorage.getItem("jwt"),

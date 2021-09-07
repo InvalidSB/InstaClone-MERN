@@ -45,7 +45,7 @@ function CreatePost() {
   useEffect(() => {
     if (photo) {
       // aba cloudinary bata data tanne
-      fetch("http://localhost:5000/api/createpost", {
+      fetch("/api/createpost", {
         method: "post",
         headers: {
           "Content-Type": "application/json",

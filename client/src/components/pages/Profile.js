@@ -69,7 +69,7 @@ function Profile() {
    const [image,setImage]=useState("")
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/myposts", {
+    fetch("/api/myposts", {
       method: "get",
       headers: {
         "Content-Type": "application/json",
@@ -97,7 +97,7 @@ useEffect(() => {
     .then((result) => {
       localStorage.setItem('user',JSON.stringify({...state,pic:result.url}))
       dispatch({type:"UPDATEPIC",payload:result.url})
-      fetch('http://localhost:5000/api/updatepropic', {
+      fetch('/api/updatepropic', {
         method: "put",
         headers: {
           "Content-Type": "application/json",

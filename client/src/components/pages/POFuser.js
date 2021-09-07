@@ -81,7 +81,7 @@ function POFuser() {
 
   const [data, setData] = useState([]);
   useEffect(async() => {
-    await fetch("http://localhost:5000/api/followedusersposts", {
+    await fetch("/api/followedusersposts", {
       method: "get",
       headers: {
         Authorization: "Bearer " + localStorage.getItem("jwt"),
@@ -95,7 +95,7 @@ function POFuser() {
   }, []);
 
   const likePost = (id) => {
-    fetch("http://localhost:5000/api/likepost", {
+    fetch("/api/likepost", {
       method: "put",
       headers: {
         "Content-Type": "application/json",
@@ -118,7 +118,7 @@ function POFuser() {
       });
   };
   const unLikePost = (id) => {
-    fetch("http://localhost:5000/api/unlikepost", {
+    fetch("/api/unlikepost", {
       method: "put",
       headers: {
         "Content-Type": "application/json",
@@ -144,7 +144,7 @@ function POFuser() {
   const [cmnt, setCmnt] = useState();
 
   const comment = (text, postId) => {
-    fetch("http://localhost:5000/api/comment", {
+    fetch("/api/comment", {
       method: "put",
       headers: {
         "Content-Type": "application/json",
