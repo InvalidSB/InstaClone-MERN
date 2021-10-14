@@ -151,7 +151,8 @@ const UploadProfile=(file)=>{
             <Button
               variant="outlined"
               color="secondary"
-              onClick={handleOpen}            >
+              onClick={handleOpen}        
+                  >
               Edit Profile
             </Button>
             <Modal
@@ -188,7 +189,7 @@ const UploadProfile=(file)=>{
               // onChange={(e) => setName(e.target.value)}
             />
            
-            {/* <TextField
+            <TextField
               variant="outlined"
               margin="normal"
               fullWidth
@@ -199,7 +200,7 @@ const UploadProfile=(file)=>{
               // value={password}
               autoComplete="current-password"
               // onChange={(e) => setPassword(e.target.value)}
-            /> */}
+            />
             <TextField
               variant="outlined"
               margin="normal"
@@ -224,6 +225,8 @@ const UploadProfile=(file)=>{
           </div>
         </Fade>
       </Modal>
+             
+             
               <div className="po-fol-fow">
                 <h3>
                   {data.length}

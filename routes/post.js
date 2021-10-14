@@ -36,6 +36,7 @@ router.get("/allposts", RequireLogin, (req, res) => {
   PostModel.find({})
     .populate("postedBy", "_id name email pic")
     .populate("comments.postedBy", "_id name ")
+    .sort("-createdAt")
     .then((posts) => {
       res.json({ posts });
     })
@@ -45,6 +46,7 @@ router.get("/allposts", RequireLogin, (req, res) => {
 router.get("/myposts", RequireLogin, (req, res) => {
   PostModel.find({ postedBy: req.user._id })
     .populate("postedBy", "_id name email pic")
+    .sort("-createdAt")
     .then((myposts) => {
       res.json({ myposts });
     })
@@ -58,7 +60,7 @@ router.put("/likepost", RequireLogin, (req, res) => {
     { new: true }
   )
     .populate("comments.postedBy", "_id name")
-    .populate("postedBy", "_id name email")
+    .populate("postedBy", "_id name email pic")
     .exec((err, result) => {
       if (err) {
         return res.status(422).json({ error: err });
@@ -75,7 +77,7 @@ router.put("/unlikepost", RequireLogin, (req, res) => {
     { new: true }
   )
     .populate("comments.postedBy", "_id name")
-    .populate("postedBy", "_id name email")
+    .populate("postedBy", "_id name email pic")
     .exec((err, result) => {
       if (err) {
         return res.status(422).json({ error: err });
@@ -90,14 +92,13 @@ router.put("/comment", RequireLogin, (req, res) => {
     text: req.body.text,
     postedBy: req.user._id,
   };
-  console.log(comment);
   PostModel.findByIdAndUpdate(
     req.body.postId,
     { $push: { comments: comment } },
     { new: true }
   )
     .populate("comments.postedBy", "_id name")
-    .populate("postedBy", "_id name")
+    .populate("postedBy", "_id name pic")
     .exec((err, result) => {
       if (err) {
         return res.status(422).json({ error: err });
@@ -106,6 +107,36 @@ router.put("/comment", RequireLogin, (req, res) => {
       }
     });
 });
+
+router.put("/uncomment", RequireLogin, (req, res) => {
+  const comment = {
+    text: req.body.text,
+    postedBy: req.user._id,
+  };
+  PostModel.findByIdAndUpdate(
+    req.body.postId,
+    { $pull: { comments: comment } },
+    { new: true }
+  )
+    .populate("comments.postedBy", "_id name")
+    .populate("postedBy", "_id name pic")
+    .exec((err, result) => {
+      if (err) {
+        return res.status(422).json({ error: err });
+      } else {
+        res.json(result);
+      }
+    });
+});
+
+
+
+
+
+
+
+
+
 
 router.delete("/delete/:postId", RequireLogin, (req, res) => {
   PostModel.findOne({ _id: req.params.postId })
@@ -136,6 +167,7 @@ router.get("/followedusersposts", RequireLogin, (req, res) => {
   PostModel.find({postedBy:{$in:req.user.following}})
     .populate("postedBy", "_id name email pic")
     .populate("comments.postedBy", "_id name")
+    .sort("-createdAt")
     .then((posts) => {
       res.json({ posts });
     })

@@ -73,12 +73,23 @@ const useStyles = makeStyles((theme) => ({
   rightpart: {
     width: "40%",
   },
+  seperater: {
+    height: 80,
+    width: "100%",
+    backgroundColor: "gray",
+    paddding: 20,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    fontSize: 10,
+  },
 }));
 
 function POFuser() {
   const classes = useStyles();
   const { state } = useContext(UserContext);
 
+  const[show ,setShow]=useState(true)
   const [data, setData] = useState([]);
   useEffect(async() => {
     await fetch("/api/followedusersposts", {
@@ -91,6 +102,12 @@ function POFuser() {
       .then((result) => {
         //  console.log(result)
         setData(result.posts);
+        if(result.posts.length != 0 ){
+          setShow(true)
+        }else{
+          setShow(false)
+
+        }
       });
   }, []);
 
@@ -176,6 +193,13 @@ function POFuser() {
      
 
           <div className={classes.leftdown}>
+            {
+              show ?
+            <div className={classes.seperater}>
+            <h1>Post of Following User</h1>
+          </div>
+:null
+            }
             <div className={classes.alignCenter}>
               {data.map((each) => {
                 return (
@@ -288,6 +312,16 @@ function POFuser() {
                 );
               })}
             </div>
+
+            {
+              show ?
+              <div className={classes.seperater}>
+              <h1>You're All Caught UP !!</h1>
+            </div>
+:null
+            }
+
+           
           </div>
             
      

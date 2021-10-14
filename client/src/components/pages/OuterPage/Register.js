@@ -202,13 +202,13 @@ export default function Register() {
               autoComplete="current-password"
               onChange={(e) => setPassword(e.target.value)}
             />
-            <p>Upload Profile</p>
+            {/* <p>Upload Profile</p>
             <div className={classes.choosefile}>
               <input
                 type="file"
                 onChange={(e) => setPhoto(e.target.files[0])}
               />
-            </div>
+            </div> */}
             <FormControlLabel
               style={{ marginTop: 15 }}
               control={<Checkbox value="remember" color="primary" />}

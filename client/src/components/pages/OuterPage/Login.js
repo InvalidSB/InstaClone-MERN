@@ -90,7 +90,7 @@ export default function Login() {
           localStorage.setItem("user", JSON.stringify(data.user));
           dispatch({ type: "USER", payload: data.user });
         }
-        // console.log(data);
+        console.log(data);
         history.push("/");
       })
       .catch((err) => console.log(err));

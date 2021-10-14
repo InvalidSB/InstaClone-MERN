@@ -48,6 +48,8 @@ router.post("/login", (req, res) => {
     return res.status(422).json({ error: "please add all the fields" });
   }
   UserModel.findOne({ email: email })
+  .populate("following", "_id name pic")
+
     .then((saveduser) => {
       if (!saveduser) {
         return res.status(422).json({ error: "Invalid Email or password" });
@@ -56,6 +58,7 @@ router.post("/login", (req, res) => {
         if (doMatch) {
           const token = jwt.sign({ _id: saveduser._id }, JWT_SECRET);
           const { _id, name, email, following, followers, pic } = saveduser;
+
           res.json({
             token,
             user: { _id, name, email, following, followers, pic },
@@ -70,5 +73,12 @@ router.post("/login", (req, res) => {
       console.log(err);
     });
 });
+
+
+// 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
+
+
+
+
 
 module.exports = router;

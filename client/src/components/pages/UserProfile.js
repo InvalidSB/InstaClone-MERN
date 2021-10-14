@@ -29,6 +29,7 @@ function UserProfile() {
       .catch((err) => console.log(err));
   }, []);
 
+  
   const followUser = () => {
     fetch("/api/follow", {
       method: "put",

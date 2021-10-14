@@ -13,31 +13,26 @@ import FavoriteIcon from "@material-ui/icons/Favorite";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import SendIcon from "@material-ui/icons/Send";
 import TextField from "@material-ui/core/TextField";
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import { UserContext } from "../../App";
 import { Link } from "react-router-dom";
-
+import HighlightOffIcon from '@material-ui/icons/HighlightOff';
 
 import POFuser from "./POFuser";
-
+import Toppart from "./Toppart";
 
 const useStyles = makeStyles((theme) => ({
   Home: {
     paddingTop: 100,
     padding: 20,
   },
-  seperater:{
-      height:60,
-      width:"100%",
-      backgroundColor:"gray",
-      paddding:20
-  },
+  
   alignCenterpart: {
     margin: "auto",
     display: "flex",
     flexDirection: "row",
-    justifyContent:"space-between",
-    position:"relative"
+    justifyContent: "space-between",
+    position: "relative",
   },
   leftPart: {
     width: "55%",
@@ -48,26 +43,12 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: "#222f3e",
   },
 
-  eachperson: {
-    margin: 10,
-    display: "flex",
-    justifyContent: "space-between",
-    overflowX: "scroll",
-    overflow: "hidden",
-  },
-  image: {
-    height: 120,
-    margin: 0,
-    padding: 0,
-    "& > img": {
-      height: 70,
-      width: 70,
-    },
-  },
-  proimage:{
-      height:40,
-      width:40,
-      borderRadius:"50%"
+  proimage: {
+    height: 40,
+    width: 40,
+    borderRadius: "50%",
+    objectFit:"center",
+    alignSelf:"center"
   },
   leftdown: {
     marginTop: 30,
@@ -93,73 +74,72 @@ const useStyles = makeStyles((theme) => ({
 
   rightpart: {
     width: "35%",
-    position:"static",
-    color:"White",
-    fontFamily:"poppins",
-    borderLeft:"1px solid gray"
+    position: "static",
+    color: "White",
+    fontFamily: "poppins",
+    borderLeft: "1px solid gray",
   },
-  centeralign:{
-    width:"90%",
-    margin:"auto"
+  centeralign: {
+    width: "90%",
+    margin: "auto",
   },
-  aafnopro:{
-    width:"80%",
-    display:"flex",
-    flexDirection:"row",
-    justifyContent:"space-around",
-    alignItems:"center",
-    margin:"auto"
+  aafnopro: {
+    width: "80%",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    margin: "auto",
   },
-  aafnodetail:{
-    margin:0,
-    '& > *':{
-      margin:0,
-      paddding:0
-    }
-  },
-  suggestionpart:{
-    margin:"40px 0px",
-    
-  },
-  sugline:{
-    display:"flex",
-    flexDirection:"row",
-    alignItems:"center",
-    justifyContent:"space-between",
-    "&>h2":{
-      fontSize:20,
-
+  aafnodetail: {
+    margin: 0,
+    "& > *": {
+      margin: 0,
+      paddding: 0,
     },
-    "&>p":{
-      fontSize:16
-    }
   },
-  peoplesug:{
-    display:"flex",
-    alignContent:"center",
-    flexDirection:"column",
-    fontWeight:400,
+  suggestionpart: {
+    margin: "40px 0px",
+  },
+  sugline: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    "&>h2": {
+      fontSize: 20,
+    },
+    "&>p": {
+      fontSize: 16,
+    },
+  },
+  peoplesug: {
+    display: "flex",
+    alignContent: "center",
+    flexDirection: "column",
+    fontWeight: 400,
 
-      "& > div":{
-        display:"flex",
-        flexDirection:"row",
-        alignItems:"center",
-        justifyContent:"space-between",
-        margin:0,
-        padding:0,
-        "& > img":{
-          height:40,
-          width:40,
-          borderRadius:"50%"
-        }
-      }
-  }
+    "& > div": {
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      margin: 0,
+      padding: 0,
+      "& > img": {
+        height: 40,
+        width: 40,
+        borderRadius: "50%",
+      },
+    },
+  },
 }));
 
 function Home() {
   const classes = useStyles();
   const { state } = useContext(UserContext);
-console.log(state)
+  // console.log(state.following)
+
   const [data, setData] = useState([]);
   useEffect(() => {
     fetch("/api/allposts", {
@@ -170,11 +150,12 @@ console.log(state)
     })
       .then((res) => res.json())
       .then((result) => {
-         console.log(result.posts)
+        //  console.log(result.posts)
         setData(result.posts);
       });
   }, []);
 
+  // like the post
   const likePost = (id) => {
     fetch("/api/likepost", {
       method: "put",
@@ -198,6 +179,7 @@ console.log(state)
         setData(newData);
       });
   };
+  // unlike the post
   const unLikePost = (id) => {
     fetch("/api/unlikepost", {
       method: "put",
@@ -223,7 +205,7 @@ console.log(state)
   };
 
   const [cmnt, setCmnt] = useState();
-
+// do comment
   const comment = (text, postId) => {
     fetch("/api/comment", {
       method: "put",
@@ -238,7 +220,7 @@ console.log(state)
     })
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
+        // console.log(result);
         const newData = data.map((item) => {
           if (item._id === result._id) {
             return result;
@@ -251,87 +233,73 @@ console.log(state)
       .catch((err) => console.log(err));
   };
 
-
-// delete functionality
-const deletePost=(postId)=>{
-  console.log("delete garne ho yo post")
-  fetch(`/api/delete/${postId}`, {
-    method: "delete",
+// delete comment
+const deletecomment = (text, postId) => {
+  fetch("/api/uncomment", {
+    method: "put",
     headers: {
+      "Content-Type": "application/json",
       Authorization: "Bearer " + localStorage.getItem("jwt"),
     },
-  }).then((res)=>res.json()).then(result=>{
-  console.log(result)
-    const newData = data.filter(each=>{
-      return each._id != result._id
-    })
-    setData(newData)
+    body: JSON.stringify({
+      postId,
+      text,
+    }),
   })
+    .then((res) => res.json())
+    .then((result) => {
+      // console.log(result);
+      const newData = data.map((item) => {
+        if (item._id === result._id) {
+          return result;
+        } else {
+          return item;
+        }
+      });
+      setData(newData);
+    })
+    .catch((err) => console.log(err));
+};
 
-}
+  // delete functionality
+  const deletePost = (postId) => {
+    // console.log("delete garne ho yo post")
+
+    fetch(`/api/delete/${postId}`, {
+      method: "delete",
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        // console.log(result)
+        const newData = data.filter((each) => {
+          return each._id != result._id;
+        });
+        setData(newData);
+      });
+  };
+
+
 
 
   return (
+    
+
     <div className={classes.Home}>
       <div className={classes.alignCenterpart}>
         <div className={classes.leftPart}>
           <div className={classes.lefttop}>
-            <div className={classes.eachperson}>
-              <div className={classes.image}>
-                <img
-                  style={{ borderRadius: "50%" }}
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRckyYf2C8fp95kgcVhT2L-gJgEz5_UUuIWnA&usqp=CAU"
-                  alt="image not found"
-                />
-                <p>InvalidSB</p>
-              </div>
-              <div className={classes.image}>
-                <img
-                  style={{ borderRadius: "50%" }}
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRckyYf2C8fp95kgcVhT2L-gJgEz5_UUuIWnA&usqp=CAU"
-                  alt="image not found"
-                />
-                <p>InvalidSB</p>
-              </div>
-              <div className={classes.image}>
-                <img
-                  style={{ borderRadius: "50%" }}
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRckyYf2C8fp95kgcVhT2L-gJgEz5_UUuIWnA&usqp=CAU"
-                  alt="image not found"
-                />
-                <p>InvalidSB</p>
-              </div>
-              <div className={classes.image}>
-                <img
-                  style={{ borderRadius: "50%" }}
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRckyYf2C8fp95kgcVhT2L-gJgEz5_UUuIWnA&usqp=CAU"
-                  alt="image not found"
-                />
-                <p>InvalidSB</p>
-              </div>
-              <div className={classes.image}>
-                <img
-                  style={{ borderRadius: "50%" }}
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRckyYf2C8fp95kgcVhT2L-gJgEz5_UUuIWnA&usqp=CAU"
-                  alt="image not found"
-                />
-                <p>InvalidSB</p>
-              </div>
-              <div className={classes.image}>
-                <img
-                  style={{ borderRadius: "50%" }}
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRckyYf2C8fp95kgcVhT2L-gJgEz5_UUuIWnA&usqp=CAU"
-                  alt="image not found"
-                />
-                <p>InvalidSB</p>
-              </div>
-            </div>
+            <Toppart />
           </div>
 
           {/* main kaam */}
-          <POFuser/>
-          <div className={classes.seperater}><h1>All Posts</h1></div>
+          
 
+          <POFuser />
+        
+ 
           <div className={classes.leftdown}>
             <div className={classes.alignCenter}>
               {data.map((each) => {
@@ -340,19 +308,33 @@ const deletePost=(postId)=>{
                     <Card className={classes.root} key={each._id}>
                       <CardHeader
                         avatar={
-                         
-                            <img className={classes.proimage} src={each.postedBy.pic} alt="image not loaded"/>
-                        
-                          }
-                        
-                        action={
-                            each.postedBy._id === state._id && 
-                            <IconButton aria-label="settings">
-                              <DeleteForeverIcon  onClick={()=>deletePost(each._id)}/>
-                            </IconButton>
-                          
+                          <img
+                            className={classes.proimage}
+                            src={each.postedBy.pic}
+                            alt="image not loaded"
+                          />
                         }
-                        title={<Link to={each.postedBy._id != state._id ? "/profile/"+each.postedBy._id:"/profile"} style={{textDecoration:"none",color:"white"}}>{each.postedBy.name}</Link>}
+                        action={
+                          each.postedBy._id === state._id && (
+                            <IconButton aria-label="settings">
+                              <DeleteForeverIcon
+                                onClick={() => deletePost(each._id)}
+                              />
+                            </IconButton>
+                          )
+                        }
+                        title={
+                          <Link
+                            to={
+                              each.postedBy._id != state._id
+                                ? "/profile/" + each.postedBy._id
+                                : "/profile"
+                            }
+                            style={{ textDecoration: "none", color: "white" }}
+                          >
+                            {each.postedBy.name}
+                          </Link>
+                        }
                         subheader={new Date(each.createdAt).toDateString()}
                       />
                       <CardMedia
@@ -404,23 +386,31 @@ const deletePost=(postId)=>{
                             {each.body}
                           </Typography>
                         </Typography>
-                          {each.comments.map((indivisual) => {
-                            return (
-                              <div key={indivisual._id}>
-                                <h5 style={{ margin: 0, padding: 0 }}>
-                                  {indivisual.postedBy.name}
-                                  <span
-                                    style={{
-                                      fontWeight: "400",
-                                      marginLeft: 10,
-                                    }}
-                                  >
-                                    {indivisual.text}
-                                  </span>
+                        {each.comments.map((indivisual) => {
+                          return (
+                            <div key={indivisual._id} style={{display:"flex",flexDirection:"row", justifyContent:"space-between",alignItems:"center",padding:"0px 30px"}}>
+                              <h5 style={{ margin: 0, padding: 0 }}>
+                                {indivisual.postedBy.name}
+                                <span
+                                  style={{
+                                    fontWeight: "400",
+                                    marginLeft: 10,
+                                  }}
+                                >
+                                  {indivisual.text}
+                                </span>
                                 </h5>
-                              </div>
-                            );
-                          })}
+                                <div>
+                              {
+                                indivisual.postedBy._id === state._id ?
+                                <HighlightOffIcon onClick={()=>deletecomment(indivisual.text,each._id)} style={{fontSize:20}}/>
+                                :null
+                              }
+                              
+                            </div>
+                            </div>
+                          );
+                        })}
                         <div
                           style={{
                             display: "flex",
@@ -440,7 +430,7 @@ const deletePost=(postId)=>{
                           <SendIcon
                             onClick={(e) => {
                               e.preventDefault();
-                              setCmnt("")
+                              setCmnt("");
                               comment(cmnt, each._id);
                             }}
                           />
@@ -458,7 +448,11 @@ const deletePost=(postId)=>{
         <div className={classes.rightpart}>
           <div className={classes.centeralign}>
             <div className={classes.aafnopro}>
-              <img src={state.pic} alt="image not loaded"  style={{height:70,width:70,borderRadius:"50%"}}/>
+              <img
+                // src={state.pic}
+                alt="image not loaded"
+                style={{ height: 70, width: 70, borderRadius: "50%",objectFit:"center",alignSelf:"center" }}
+              />
               <div className={classes.aafnodetail}>
                 <h3>{state.name}</h3>
                 <p>{state.email}</p>
@@ -466,42 +460,52 @@ const deletePost=(postId)=>{
             </div>
             <div className={classes.suggestionpart}>
               <div className={classes.sugline}>
-              <h2>SOME SUGGESTION FOR YOU </h2>
-              <p>SEE ALL</p>
+                <h2>SOME SUGGESTION FOR YOU </h2>
+                <p>SEE ALL</p>
               </div>
-<hr/>
+              <hr />
 
               <div className={classes.peoplesug}>
-                <div >
-                <img alt="not loaded" src="https://images6.fanpop.com/image/photos/41400000/Katherine-Langford-actresses-41401047-886-886.jpg"/>
-                <h3>Katherine Langford</h3>
-                <p>Follow</p>
+                <div>
+                  <img
+                    alt="not loaded"
+                    src="https://images6.fanpop.com/image/photos/41400000/Katherine-Langford-actresses-41401047-886-886.jpg"
+                  />
+                  <h3>Katherine Langford</h3>
+                  <p>Follow</p>
+                </div>
+                <div>
+                  <img
+                    alt="not loaded"
+                    src="https://images2.fanpop.com/images/photos/7000000/Scarlett-Johansson-actresses-7093421-810-1222.jpg"
+                  />
+                  <h3>Scarlett Johansson</h3>
+                  <p>Follow</p>
+                </div>
+                <div>
+                  <img
+                    alt="not loaded"
+                    src="https://images6.fanpop.com/image/photos/41400000/Katherine-Langford-actresses-41401047-886-886.jpg"
+                  />
+                  <h3>Katherine Langford</h3>
+                  <p>Follow</p>
+                </div>
+                <div>
+                  <img
+                    alt="not loaded"
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Andrew_Garfield_by_Gage_Skidmore_%28cropped%29.jpg/800px-Andrew_Garfield_by_Gage_Skidmore_%28cropped%29.jpg"
+                  />
+                  <h3>Andrew Garfield</h3>
+                  <p>Follow</p>
+                </div>
               </div>
-              <div>
-                <img alt="not loaded" src="https://images2.fanpop.com/images/photos/7000000/Scarlett-Johansson-actresses-7093421-810-1222.jpg"/>
-                <h3>Scarlett Johansson</h3>
-                <p>Follow</p>
-              </div>
-              <div >
-                <img alt="not loaded" src="https://images6.fanpop.com/image/photos/41400000/Katherine-Langford-actresses-41401047-886-886.jpg"/>
-                <h3>Katherine Langford</h3>
-                <p>Follow</p>
-              </div>
-              <div>
-                <img alt="not loaded" src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Andrew_Garfield_by_Gage_Skidmore_%28cropped%29.jpg/800px-Andrew_Garfield_by_Gage_Skidmore_%28cropped%29.jpg"/>
-                <h3>Andrew Garfield</h3>
-                <p>Follow</p>
-              </div>
-              
-              </div>
-              
             </div>
             <div></div>
           </div>
         </div>
-      
       </div>
     </div>
+            
   );
 }
 

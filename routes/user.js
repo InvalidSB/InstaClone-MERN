@@ -22,8 +22,12 @@ router.get("/profile/:id", RequireLogin, (req, res) => {
       return res.status(404).json({ error: "user not found" });
     });
 });
+
+
 // follow
 router.put("/follow", RequireLogin, (req, res) => {
+  console.log(req)
+  console.log(req.user)
   UserModel.findByIdAndUpdate(
     req.body.followId,
     {
@@ -40,7 +44,8 @@ router.put("/follow", RequireLogin, (req, res) => {
           $push: { following: req.body.followId },
         },
         { new: true }
-      ).select("-password")
+      )
+        .select("-password")
         .then((result) => {
           res.json(result);
         })
@@ -69,7 +74,8 @@ router.put("/unfollow", RequireLogin, (req, res) => {
           $pull: { following: req.body.unfollowId },
         },
         { new: true }
-      ).select("-password")
+      )
+        .select("-password")
         .then((result) => {
           res.json(result);
         })
@@ -80,19 +86,45 @@ router.put("/unfollow", RequireLogin, (req, res) => {
   );
 });
 
-router.put('/updatepropic',RequireLogin,(req,res)=>{
+router.put("/updatepropic", RequireLogin, (req, res) => {
   const { pic } = req.body;
-    UserModel.findByIdAndUpdate(req.user._id,{
-      $set:{
-        pic
+  UserModel.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        pic,
+      },
+    },
+    { new: true },
+    (err, result) => {
+      if (err) {
+        return res.status(422).json({ error: "Profile pic not updated" });
       }
-    },{new:true},(err,result)=>{
-      if(err){
-        return res.status(422).json({error:"Profile pic not updated"})
-      }
-      res.json(result)
-    })
-})
+      res.json(result);
+    }
+  );
+});
 
+// followed user profile image and name
+router.get("/followeduserpn", RequireLogin, (req, res) => {
+  UserModel.find(req.user._id)
+    .populate("following", "_id name pic")
+    .then((result) => {
+      res.json(result);
+    })
+    .catch((err) => console.log(err));
+});
+
+// user search garera dekhauna
+
+router.post("/searchuser", RequireLogin, (req, res) => {
+  let userPattern = new RegExp("^" + req.body.query);
+  UserModel.find({ email: { $regex: userPattern } })
+    .select("_id email name pic")
+    .then((userRecord) => res.json({ userRecord }))
+    .catch((err) => {
+      console.log(err);
+    });
+});
 
 module.exports = router;
