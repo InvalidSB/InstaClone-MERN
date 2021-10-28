@@ -13,7 +13,7 @@ After having the experience of almost 6 month of react, node ,express etc...I ha
 ## Some pics
 ### Home Page
 ![homepage](Uiimages/Home.png)
-### Searh box
+### Search box
 ![homepage](Uiimages/Searchuser.png)
 ### User Profile
 ![homepage](Uiimages/Userprofile.png)
