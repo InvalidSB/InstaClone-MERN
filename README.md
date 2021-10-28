@@ -11,5 +11,12 @@ After having the experience of almost 6 month of react, node ,express etc...I ha
 (User's profile pic and any post's photos are stored in cloudinary and fetched )
 
 ## Some pics
-
+### Home Page
 ![homepage](Uiimages/Home.png)
+### Searh box
+![homepage](Uiimages/Searchuser.png)
+### User Profile
+![homepage](Uiimages/Userprofile.png)
+### Update ProfileDetails
+![homepage](Uiimages/Updateprofile.png)
+
