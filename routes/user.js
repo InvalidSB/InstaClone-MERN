@@ -105,6 +105,83 @@ router.put("/updatepropic", RequireLogin, (req, res) => {
   );
 });
 
+// update other user's details
+router.put("/updatedetails/:id", RequireLogin, async(req, res) => {
+  
+ const{name,email,bio}=req.body
+
+        // bcrypt.hash(password, 12).then((hashedpassword) => {updatedpassword=hashedpassword})
+
+        UserModel.findOne({ _id: req.user._id }, (err, user) => {
+          if (err || !user) {
+            return res.status(400).json({
+              error: "User not found",
+            });
+          }
+          if (!name) {
+            return res.status(400).json({
+              error: "Name is required",
+            });
+          } else {
+            user.name = name;
+          }
+         
+          if (!email) {
+            return res.status(400).json({
+              error: "Email is required",
+            });
+          } else {
+            user.email = email;
+          }
+         
+      
+          if (bio) {
+            if (bio.length > 150) {
+              return res.status(400).json({
+                error: "User's Bio should be less than 150 characters long",
+              });
+            } else {
+              user.bio = bio;
+            }
+          }
+          user.save((err, updatedUser) => {
+            if (err) {
+              console.log("USER UPDATE ERROR", err);
+              return res.status(400).json({
+                error: "User update failed",
+              });
+            }
+           
+            res.json(updatedUser);
+          });
+        })
+
+
+//         const updatedUser = await UserModel.findByIdAndUpdate(
+//           req.params.id,
+//           {
+//             $set: {
+//               name:name,
+//               password: bcrypt.hash(password, 12),
+//               bio:bio
+//             },
+//           },
+//           { new: true }
+//         );
+//  console.log("after",name,password,bio)
+
+//         res.status(200).json(console.log(updatedUser));
+      
+    
+
+})
+
+
+
+
+
+
+
 // followed user profile image and name
 router.get("/followeduserpn", RequireLogin, (req, res) => {
   UserModel.find(req.user._id)
@@ -127,4 +204,24 @@ router.post("/searchuser", RequireLogin, (req, res) => {
     });
 });
 
+
+
+// some random users for suggestion
+
+router.get("/somerandomuser", RequireLogin, (req, res) => {
+  UserModel.find({
+    followers: {
+      $nin: [req.user._id],
+    },
+  })
+    .limit(4)
+    .exec(function (error, users) {
+      if (error)
+        return res.status(500).json({
+          msg:error
+        });
+      else return res.status(200).json(users);
+    });
+}
+)
 module.exports = router;

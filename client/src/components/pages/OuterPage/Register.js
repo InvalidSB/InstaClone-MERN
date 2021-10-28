@@ -25,7 +25,7 @@ function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
-      <Link color="inherit" href="suzansharma.com.np">
+      <Link color="inherit" href="https://suzansharma.com.np/">
         InvalidSB
       </Link>{" "}
       {new Date().getFullYear()}
@@ -69,41 +69,19 @@ export default function Register() {
   const [name, setName] = useState();
   const [password, setPassword] = useState();
   const [email, setEmail] = useState();
-  const [photo, setPhoto] = useState("");
-  const [url, setUrl] = useState("");
 
   const [message, setMessage] = useState("");
-  const [show, setShow] = useState(false);
 
   const history = useHistory();
 
   
 
-  const UploadProfile = () => {
-    const data = new FormData();
-    data.append("file", photo);
-    data.append("upload_preset", "initGram");
-    data.append("cloud_name", "init");
-    // first cloudinary ma upload garne
-    fetch(" https://api.cloudinary.com/v1_1/init/image/upload", {
-      method: "post",
-      body: data,
-    })
-      .then((res) => res.json())
-      .then((result) => {
-        setUrl(result.url);
-      })
-      .catch((err) => console.log(err));
-  };
-  
-  useEffect(() => {
-    if (url) {
-      uplpstFields();
-    }
-  }, [url]);
+ 
+ 
 
   // common part with or without image ko lagi
-  const uplpstFields = () => {
+  const handleClick = (e) => {
+    e.preventDefault()
     if (!/^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       setMessage("Email you just enter dosn't exist");
       return;
@@ -117,7 +95,6 @@ export default function Register() {
         name,
         password,
         email,
-        pic:url,
       }),
     })
       .then((res) => res.json())
@@ -131,20 +108,10 @@ export default function Register() {
       .catch((err) => console.log(err));
   };
 
-  const handleClick = () => {
-    setShow(true);
-    if (photo) {
-      UploadProfile();
-      console.log("yo call vayo")
-    } else {
-      uplpstFields();
-    }
-  };
-
+ 
 
   return (
     <>
-      {show ? <Alert severity="info">{message}</Alert> : null}
       <Container
         component="main"
         maxWidth="xs"
@@ -202,13 +169,7 @@ export default function Register() {
               autoComplete="current-password"
               onChange={(e) => setPassword(e.target.value)}
             />
-            {/* <p>Upload Profile</p>
-            <div className={classes.choosefile}>
-              <input
-                type="file"
-                onChange={(e) => setPhoto(e.target.files[0])}
-              />
-            </div> */}
+            
             <FormControlLabel
               style={{ marginTop: 15 }}
               control={<Checkbox value="remember" color="primary" />}

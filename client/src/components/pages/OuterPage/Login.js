@@ -14,19 +14,15 @@ import Container from "@material-ui/core/Container";
 
 import { Link, useHistory } from "react-router-dom";
 
-import MuiAlert from "@material-ui/lab/Alert";
 import { UserContext } from "../../../App";
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {"Copyright © "}
-      <Link color="inherit" href="suzansharma.com.np">
+      <a color="inherit" href="https://suzansharma.com.np/">
         InvalidSB
-      </Link>{" "}
+      </a>
       {new Date().getFullYear()}
       {"."}
     </Typography>
@@ -66,7 +62,7 @@ export default function Login() {
   const history = useHistory();
   const handleClick = (e) => {
     setShow(true);
-
+    console.log(email, password);
     e.preventDefault();
     if (!/^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       setMessage("Email you just enter dosn't exist");
@@ -83,23 +79,27 @@ export default function Login() {
       }),
     })
       .then((res) => res.json())
-      .then((data,err) => {
-        if(!err){
-
+      .then((data, err) => {
+        console.log(data);
+        if (data.error) {
+          console.log(err);
+          localStorage.clear();
+          setInterval(() => {
+            setMessage(data.error);
+            
+          }, 5000);
+        } else {
           localStorage.setItem("jwt", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
           dispatch({ type: "USER", payload: data.user });
+          history.push("/");
         }
-        console.log(data);
-        history.push("/");
       })
       .catch((err) => console.log(err));
   };
 
   return (
     <>
-      {show ? <Alert severity="info">{message}</Alert> : null}
-
       <Container
         component="main"
         maxWidth="xs"
@@ -166,8 +166,10 @@ export default function Login() {
                 </Link>
               </Grid>
             </Grid>
+
           </form>
         </div>
+        <p style={{marginTop:20,color:"tomato"}}>{message}</p>
         <Box mt={8}>
           <Copyright />
         </Box>

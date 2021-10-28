@@ -129,6 +129,18 @@ router.put("/uncomment", RequireLogin, (req, res) => {
     });
 });
 
+// get single post 
+
+router.get("/singlepost/:postId", RequireLogin, (req, res) => {
+  PostModel.findById(req.params.postId)
+    .populate("postedBy", "_id name email pic")
+    .populate("comments.postedBy", "_id name ")
+    
+    .then(onepost => {
+      res.json( {onepost} );
+    })
+    .catch((err) => console.log(err));
+});
 
 
 
@@ -165,6 +177,17 @@ router.delete("/delete/:postId", RequireLogin, (req, res) => {
 
 router.get("/followedusersposts", RequireLogin, (req, res) => {
   PostModel.find({postedBy:{$in:req.user.following}})
+    .populate("postedBy", "_id name email pic")
+    .populate("comments.postedBy", "_id name")
+    .sort("-createdAt")
+    .then((posts) => {
+      res.json({ posts });
+    })
+    .catch((err) => console.log(err));
+});
+// post of those whom im not following
+router.get("/notfollowingusersposts", RequireLogin, (req, res) => {
+  PostModel.find({postedBy:{$nin:req.user.following}})
     .populate("postedBy", "_id name email pic")
     .populate("comments.postedBy", "_id name")
     .sort("-createdAt")

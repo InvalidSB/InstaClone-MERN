@@ -12,7 +12,7 @@ import AccountCircle from "@material-ui/icons/AccountCircle";
 import MailIcon from "@material-ui/icons/Mail";
 import NotificationsIcon from "@material-ui/icons/Notifications";
 import MoreIcon from "@material-ui/icons/MoreVert";
-
+import AddBoxOutlinedIcon from "@material-ui/icons/AddBoxOutlined";
 import Modal from "@material-ui/core/Modal";
 import Backdrop from "@material-ui/core/Backdrop";
 import Fade from "@material-ui/core/Fade";
@@ -90,7 +90,7 @@ const useStyles = makeStyles((theme) => ({
   },
   links: {
     textDecoration: "none",
-    color: "white",
+    color: "tomato",
   },
   modal: {
     display: "flex",
@@ -98,8 +98,8 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
   },
   paper: {
-    backgroundColor: "gray",
-    border: "2px solid #000",
+    backgroundColor: "tomato",
+    border: "2px solid #0000",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
     textAlign: "center",
@@ -175,19 +175,13 @@ export default function Navbar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
-      <MenuItem
-        onClick={handleMenuClose}
-        style={{ backgroundColor: "#222f3e" }}
-      >
+      <MenuItem onClick={handleMenuClose}>
         <Link to="/profile" className={classes.links}>
           Profile
         </Link>
       </MenuItem>
-      
-      <MenuItem
-        onClick={handleMenuClose}
-        style={{ backgroundColor: "#222f3e" }}
-      >
+
+      <MenuItem onClick={handleMenuClose}>
         <Link
           to="/signin"
           className={classes.links}
@@ -199,14 +193,7 @@ export default function Navbar() {
           LogOut
         </Link>
       </MenuItem>
-      <MenuItem
-        onClick={handleMenuClose}
-        style={{ backgroundColor: "#222f3e" }}
-      >
-        <Link to="/createpost" className={classes.links}>
-          Create Post
-        </Link>
-      </MenuItem>
+     
     </Menu>
   );
 
@@ -228,6 +215,15 @@ export default function Navbar() {
           </Badge>
         </IconButton>
         <p>Messages</p>
+      </MenuItem>
+      <MenuItem>
+        <IconButton aria-label="show createpost" color="inherit">
+        <Link to="/createpost" className={classes.links}>
+          <AddBoxOutlinedIcon />
+          
+        </Link>
+        </IconButton>
+        <p>Createpost</p>
       </MenuItem>
       <MenuItem>
         <IconButton aria-label="show 11 new notifications" color="inherit">
@@ -254,13 +250,13 @@ export default function Navbar() {
   return (
     <div className={classes.grow}>
       {state ? (
-        <AppBar style={{ backgroundColor: "#222f3e" }}>
+        <AppBar style={{ backgroundColor: "white" }}>
           <Toolbar position="fixed" style={{ width: "60%", margin: "auto" }}>
             <Typography className={classes.title} variant="h6" noWrap>
               <Link
                 className={classes.links}
                 to="/"
-                style={{ fontFamily: "Grand Hotel", fontSize: 35 }}
+                style={{ fontFamily: "Grand Hotel", fontSize: 38 }}
               >
                 Initgram
               </Link>
@@ -312,7 +308,7 @@ export default function Navbar() {
                                 : "/profile"
                             }
                             style={{ textDecoration: "none", color: "black" }}
-                            onClick={()=>setOpen(false)}
+                            onClick={() => setOpen(false)}
                           >
                             <h3>{item.name}</h3>
                           </Link>
@@ -327,22 +323,25 @@ export default function Navbar() {
               </Fade>
             </Modal>
 
-
-
-
-
             <div className={classes.sectionDesktop}>
               <IconButton aria-label="show 4 new mails" color="inherit">
                 <Badge badgeContent={4} color="secondary">
-                  <MailIcon />
+                  <MailIcon style={{ color: "tomato" }} />
                 </Badge>
+              </IconButton>
+              <IconButton aria-label="show createpost icon" color="inherit">
+                <Link to="/createpost" className={classes.links}>
+                <AddBoxOutlinedIcon style={{ color: "tomato" }} />
+               
+              </Link>
+
               </IconButton>
               <IconButton
                 aria-label="show 17 new notifications"
                 color="inherit"
               >
                 <Badge badgeContent={1} color="secondary">
-                  <NotificationsIcon />
+                  <NotificationsIcon style={{ color: "tomato" }} />
                 </Badge>
               </IconButton>
               <IconButton
@@ -353,7 +352,7 @@ export default function Navbar() {
                 onClick={handleProfileMenuOpen}
                 color="inherit"
               >
-                <AccountCircle />
+                <AccountCircle style={{ color: "tomato" }} />
               </IconButton>
             </div>
             <div className={classes.sectionMobile}>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
+import { Card, Button } from "@material-ui/core";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
@@ -15,9 +15,12 @@ import SendIcon from "@material-ui/icons/Send";
 import TextField from "@material-ui/core/TextField";
 import { UserContext } from "../../App";
 import { Link } from "react-router-dom";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 
 const useStyles = makeStyles((theme) => ({
- 
   leftPart: {
     width: "55%",
     // borderRight:"4px solid gray"
@@ -43,11 +46,11 @@ const useStyles = makeStyles((theme) => ({
       width: 70,
     },
   },
-  proimage:{
-    height:40,
-    width:40,
-    borderRadius:"50%"
-},
+  proimage: {
+    height: 40,
+    width: 40,
+    borderRadius: "50%",
+  },
   leftdown: {
     marginTop: 30,
     // border: "1px solid white",
@@ -56,10 +59,11 @@ const useStyles = makeStyles((theme) => ({
 
   root: {
     width: "100%",
-    marginBottom: 30,
-    backgroundColor: "#222f3e",
-    color: "white",
+    marginBottom: 40,
+    backgroundColor: "#fff",
+    color: "black",
     paddding: 0,
+    boxShadow: "2px 1px 1px 2px gray",
   },
 
   media: {
@@ -82,6 +86,7 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     alignItems: "center",
     fontSize: 10,
+    marginBottom: 20,
   },
 }));
 
@@ -89,9 +94,9 @@ function POFuser() {
   const classes = useStyles();
   const { state } = useContext(UserContext);
 
-  const[show ,setShow]=useState(true)
+  const [show, setShow] = useState(true);
   const [data, setData] = useState([]);
-  useEffect(async() => {
+  useEffect(async () => {
     await fetch("/api/followedusersposts", {
       method: "get",
       headers: {
@@ -102,11 +107,10 @@ function POFuser() {
       .then((result) => {
         //  console.log(result)
         setData(result.posts);
-        if(result.posts.length != 0 ){
-          setShow(true)
-        }else{
-          setShow(false)
-
+        if (result.posts.length != 0) {
+          setShow(true);
+        } else {
+          setShow(false);
         }
       });
   }, []);
@@ -188,143 +192,192 @@ function POFuser() {
   };
 
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleOptionmenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleOptionMenuClose = () => {
+    setAnchorEl(null);
+  };
+
 
   return (
-     
-
-          <div className={classes.leftdown}>
-            {
-              show ?
-            <div className={classes.seperater}>
-            <h1>Post of Following User</h1>
-          </div>
-:null
-            }
-            <div className={classes.alignCenter}>
-              {data.map((each) => {
-                return (
-                  <>
-                    <Card className={classes.root} key={each._id}>
-                      <CardHeader
-                        avatar={
-                          <img className={classes.proimage} src={each.postedBy.pic} alt="image not loaded"/>
-
-                        }
-                        
-                      
-                        title={<Link to={each.postedBy._id != state._id ? "/profile/"+each.postedBy._id:"/profile"} style={{textDecoration:"none",color:"white"}}>{each.postedBy.name}</Link>}
-                        subheader={new Date(each.createdAt).toDateString()}
-                      />
-                      <CardMedia
-                        className={classes.media}
-                        image={each.photo}
-                        title={
-                          each.postedBy.name + " writes about " + each.title
-                        }
-                      />
-
-                      <CardActions style={{ marginBottom: 0, padding: 0 }}>
-                        {each.likes.includes(state._id) ? (
-                          <IconButton
-                            aria-label="add to favorites"
-                            onClick={() => unLikePost(each._id)}
-                          >
-                            <FavoriteIcon
-                              style={{ color: "red", fontSize: 40 }}
-                            />
-                          </IconButton>
-                        ) : (
-                          <IconButton
-                            aria-label="add to favorites"
-                            onClick={() => likePost(each._id)}
-                          >
-                            <FavoriteBorderIcon
-                              style={{ color: "white", fontSize: 40 }}
-                            />
-                          </IconButton>
-                        )}
-
-                        <IconButton aria-label="share">
-                          <ShareIcon />
-                        </IconButton>
-                      </CardActions>
-                      <CardContent
-                        style={{
-                          marginBottom: 0,
-                          textAlign: "left",
-                          padding: 0,
-                          paddingLeft: 10,
-                        }}
+    <div className={classes.leftdown}>
+      {show ? (
+        <div className={classes.seperater}>
+          <h1>Post of Following User</h1>
+        </div>
+      ) : null}
+      <div className={classes.alignCenter}>
+        {data?.map((each) => {
+          return (
+            <>
+              <Card className={classes.root} key={each._id}>
+                <CardHeader
+                  avatar={
+                    <img
+                      className={classes.proimage}
+                      src={each.postedBy.pic}
+                      alt="image not loaded"
+                    />
+                  }
+                  action={
+                    // try for menu start
+                    <>
+                      <Button>
+                        <MoreVertIcon onClick={handleOptionmenu} />
+                      </Button>
+                      <Menu
+                        id="simple-menu"
+                        anchorEl={anchorEl}
+                        keepMounted
+                        open={Boolean(anchorEl)}
+                        onClose={handleOptionMenuClose}
                       >
-                        <Typography>{each.likes.length} likes</Typography>
-
-                        <Typography component="h3">
-                          {each.title}
-                          <Typography component="p" style={{ color: "gray" }}>
-                            {each.body}
-                          </Typography>
-                        </Typography>
-                          {each.comments.map((indivisual) => {
-                            return (
-                              <div key={indivisual._id}>
-                                <h5 style={{ margin: 0, padding: 0 }}>
-                                  {indivisual.postedBy.name}
-                                  <span
-                                    style={{
-                                      fontWeight: "400",
-                                      marginLeft: 10,
-                                    }}
-                                  >
-                                    {indivisual.text}
-                                  </span>
-                                </h5>
-                              </div>
-                            );
-                          })}
-                        <div
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            marginBottom: 0,
-                            padding: 0,
-                          }}
-                        >
-                          <TextField
-                            id="standard-basic"
-                            label="Add a comment"
-                            fullWidth
-                            value={cmnt}
-                            style={{ margin: 10 }}
-                            onChange={(e) => setCmnt(e.target.value)}
-                          />
-                          <SendIcon
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setCmnt("")
-                              comment(cmnt, each._id);
+                        <MenuItem onClick={handleOptionMenuClose}>
+                          <Link
+                            to={`/post/${each._id}`}
+                            style={{
+                              textDecoration: "none",
+                              color: "black",
                             }}
-                          />
-                        </div>
-                      </CardContent>
-                    </Card>
-                    {/*  */}
-                  </>
-                );
-              })}
-            </div>
+                          >
+                            {" "}
+                            Go to Post
+                          </Link>
+                        </MenuItem>
+                        <MenuItem onClick={handleOptionMenuClose}>
+                          Copy Link
+                        </MenuItem>
+                        <MenuItem onClick={handleOptionMenuClose}>
+                          Report
+                        </MenuItem>
+                       
+                      </Menu>
+                    </>
+                    // try for menu end
+                  }
+                  title={
+                    <Link
+                      to={
+                        each.postedBy._id != state._id
+                          ? "/profile/" + each.postedBy._id
+                          : "/profile"
+                      }
+                      style={{
+                        textDecoration: "none",
+                        color: "black",
+                        fontSize: 22,
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {each.postedBy.name}
+                    </Link>
+                  }
+                  subheader={new Date(each.createdAt).toDateString()}
+                />
+                <CardMedia
+                  className={classes.media}
+                  image={each.photo}
+                  title={each.postedBy.name + " writes about " + each.title}
+                />
 
-            {
-              show ?
-              <div className={classes.seperater}>
-              <h1>You're All Caught UP !!</h1>
-            </div>
-:null
-            }
+                <CardActions style={{ marginBottom: 0, padding: 0 }}>
+                  {each.likes.includes(state._id) ? (
+                    <IconButton
+                      aria-label="add to favorites"
+                      onClick={() => unLikePost(each._id)}
+                    >
+                      <FavoriteIcon style={{ color: "red", fontSize: 40 }} />
+                    </IconButton>
+                  ) : (
+                    <IconButton
+                      aria-label="add to favorites"
+                      onClick={() => likePost(each._id)}
+                    >
+                      <FavoriteBorderIcon
+                        style={{ color: "white", fontSize: 40 }}
+                      />
+                    </IconButton>
+                  )}
 
-           
-          </div>
-            
-     
+                  <IconButton aria-label="share">
+                    <ShareIcon />
+                  </IconButton>
+                </CardActions>
+                <CardContent
+                  style={{
+                    marginBottom: 0,
+                    textAlign: "left",
+                    padding: 0,
+                    paddingLeft: 10,
+                  }}
+                >
+                  <Typography>{each.likes.length} likes</Typography>
+
+                  <Typography component="h3">
+                    {each.title}
+                    <Typography component="p" style={{ color: "gray" }}>
+                      {each.body}
+                    </Typography>
+                  </Typography>
+                  {each.comments.map((indivisual) => {
+                    return (
+                      <div key={indivisual._id}>
+                        <h5 style={{ margin: 0, padding: 0 }}>
+                          {indivisual.postedBy.name}
+                          <span
+                            style={{
+                              fontWeight: "400",
+                              marginLeft: 10,
+                            }}
+                          >
+                            {indivisual.text}
+                          </span>
+                        </h5>
+                      </div>
+                    );
+                  })}
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      marginBottom: 0,
+                      padding: 0,
+                    }}
+                  >
+                    <TextField
+                      id="standard-basic"
+                      label="Add a comment"
+                      fullWidth
+                      value={cmnt}
+                      style={{ margin: 10 }}
+                      onChange={(e) => setCmnt(e.target.value)}
+                    />
+                    <SendIcon
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCmnt("");
+                        comment(cmnt, each._id);
+                      }}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+              {/*  */}
+            </>
+          );
+        })}
+      </div>
+
+      {show ? (
+        <div className={classes.seperater}>
+          <h1>You're All Caught UP !!</h1>
+        </div>
+      ) : null}
+    </div>
   );
 }
 

@@ -3,7 +3,7 @@ import "./Profile.css";
 import Button from "@material-ui/core/Button";
 import { UserContext } from "../../App";
 
-import { useParams } from "react-router-dom";
+import { Link,useParams } from "react-router-dom";
 
 function UserProfile() {
   const { state, dispatch } = useContext(UserContext);
@@ -43,7 +43,7 @@ function UserProfile() {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         dispatch({
           type: "UPDATE",
           payload: { following: data.following, followers: data.followers },
@@ -164,12 +164,21 @@ function UserProfile() {
               <div className="mygallery">
                 {userProfile.posts.map((each) => {
                   return (
+                    <Link
+                    to={`/post/${each._id}`}
+                    // style={{
+                    //   textDecoration: "none",
+                    //   color: "black",
+                    // }}
+                  >
                     <img
                       src={each.photo}
                       alt="photo not loaded"
                       key={each._id}
-                      
+    
+                      style={{width: "32%"}}
                     />
+                    </Link>
                   );
                 })}
               </div>

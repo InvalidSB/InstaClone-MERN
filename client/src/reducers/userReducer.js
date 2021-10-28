@@ -20,5 +20,13 @@ export const reducer = (state,action)=>{
                 pic:action.payload
             }
         }
+        if(action.type === "UPDATEDETAILS"){
+            return {
+                ...state,
+                name:action.payload.name,
+                email:action.payload.email,
+                bio:action.payload.bio
+            }
+        }
         return state
 }

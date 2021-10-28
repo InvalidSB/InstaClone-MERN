@@ -7,7 +7,7 @@ import Home from "./components/pages/Home";
 import Profile from "./components/pages/Profile";
 import UserProfile from "./components/pages/UserProfile";
 import CreatePost from "./components/pages/CreatePost";
-import Private from "./components/pages/Private";
+import SinglePost from "./components/pages/SinglePost";
 import Register from "./components/pages/OuterPage/Register";
 import Login from "./components/pages/OuterPage/Login";
 import { reducer, initialState } from "./reducers/userReducer";
@@ -37,7 +37,7 @@ const Routing = () => {
       <Route exact path="/createpost" component={CreatePost} />
       <Route exact path="/signin" component={Login} />
       <Route exact path="/signup" component={Register} />
-      <Route exact path="/private" component={Private} />
+      <Route exact path="/post/:postId" component={SinglePost} />
     </Switch>
   );
 };

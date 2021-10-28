@@ -24,29 +24,13 @@ const useStyles = makeStyles((theme) => ({
 function Toppart() {
   const classes = useStyles();
   const { state } = useContext(UserContext);
-console.log(state.following)
-console.log(typeof(state.following))
-  // const [data, setData] = useState([]);
-  // useEffect(() => {
-  //   console.log("yaha aayo");
-  //   fetch("/api/followeduserpn", {
-  //     method: "get",
-  //     headers: {
-  //       Authorization: "Bearer " + localStorage.getItem("jwt"),
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((result) => {
-  //       console.log(result);
-  //       setData(result);
-  //     });
-  // }, []);
+
   return (
     <div>
       <div className={classes.eachperson}>
        
         {
-          state.following.map((item) => {
+          state ? state.following.map((item) => {
           
             <div className={classes.image}>
               <img
@@ -56,7 +40,7 @@ console.log(typeof(state.following))
               />
               <p>{item.name}</p>
             </div>
-          })
+          } ):null
         }
         
       </div>

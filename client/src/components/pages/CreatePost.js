@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme) => ({
     padding: 30,
     width: "30%",
     borderRadius: 20,
+    boxShadow:"1px 2px 3px 2px gray"
   },
   choosefile: {
     margin: "30px 0px",
@@ -88,7 +89,7 @@ function CreatePost() {
   return (
     <div className={classes.createpost}>
       <Typography
-        style={{ marginBottom: 30, color: "white", textTransform: "uppercase" }}
+        style={{ marginBottom: 50,fontSize:24, fontWeight:"bolder",color: "gray", textTransform: "uppercase" }}
       >
         Create your post here
       </Typography>
@@ -99,7 +100,7 @@ function CreatePost() {
             <TextField
               style={{ marginBottom: 20 }}
               id=" outlined-basic"
-              label="On what regard"
+              label="On what regards"
               variant="outlined"
               fullWidth
               value={title}

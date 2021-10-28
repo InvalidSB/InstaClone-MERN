@@ -10,8 +10,8 @@ const JWT_SECRET = require("../config/keys");
 
 // signup route
 router.post("/register", (req, res) => {
-  const { name, email, password, pic } = req.body;
-
+  const { name, email, password } = req.body;
+// console.log(name,email,password)
   if (!email || !name || !password) {
     return res.status(422).json({ error: "please add all the fields" });
   }
@@ -27,7 +27,6 @@ router.post("/register", (req, res) => {
           email,
           password: hashedpassword,
           name,
-          pic,
         });
         user
           .save()
@@ -43,6 +42,7 @@ router.post("/register", (req, res) => {
 });
 
 router.post("/login", (req, res) => {
+  // console.log(req.body.email,req.body.password)
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(422).json({ error: "please add all the fields" });

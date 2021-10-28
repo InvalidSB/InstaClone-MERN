@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
+import { Card, Button } from "@material-ui/core";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
@@ -11,12 +11,14 @@ import { red } from "@material-ui/core/colors";
 import ShareIcon from "@material-ui/icons/Share";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
-import SendIcon from "@material-ui/icons/Send";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 import TextField from "@material-ui/core/TextField";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import { UserContext } from "../../App";
 import { Link } from "react-router-dom";
-import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 
 import POFuser from "./POFuser";
 import Toppart from "./Toppart";
@@ -26,7 +28,7 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: 100,
     padding: 20,
   },
-  
+
   alignCenterpart: {
     margin: "auto",
     display: "flex",
@@ -40,15 +42,15 @@ const useStyles = makeStyles((theme) => ({
   },
   lefttop: {
     padding: 10,
-    backgroundColor: "#222f3e",
+    backgroundColor: "#fff",
   },
 
   proimage: {
     height: 40,
     width: 40,
     borderRadius: "50%",
-    objectFit:"center",
-    alignSelf:"center"
+    objectFit: "center",
+    alignSelf: "center",
   },
   leftdown: {
     marginTop: 30,
@@ -59,9 +61,10 @@ const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     marginBottom: 30,
-    backgroundColor: "#222f3e",
-    color: "white",
+    backgroundColor: "#fff",
+    color: "black",
     paddding: 0,
+    boxShadow: "2px 1px 1px 1px gray",
   },
 
   media: {
@@ -74,8 +77,8 @@ const useStyles = makeStyles((theme) => ({
 
   rightpart: {
     width: "35%",
-    position: "static",
-    color: "White",
+    position: "sticky",
+    color: "black",
     fontFamily: "poppins",
     borderLeft: "1px solid gray",
   },
@@ -100,6 +103,7 @@ const useStyles = makeStyles((theme) => ({
   },
   suggestionpart: {
     margin: "40px 0px",
+    marginBottom: 60,
   },
   sugline: {
     display: "flex",
@@ -133,6 +137,17 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
+  ptext: {
+    marginRight: 10,
+    fontSize: 14,
+    marginBottom: 0,
+    curser: "poiter",
+    textTransform: "uppercase",
+    "& >a": {
+      textDecoration: "none",
+      color: "gray",
+    },
+  },
 }));
 
 function Home() {
@@ -141,6 +156,7 @@ function Home() {
   // console.log(state.following)
 
   const [data, setData] = useState([]);
+  const [someUser, setSomeUser] = useState([]);
   useEffect(() => {
     fetch("/api/allposts", {
       method: "get",
@@ -150,7 +166,8 @@ function Home() {
     })
       .then((res) => res.json())
       .then((result) => {
-        //  console.log(result.posts)
+        // console.log(typeof result.posts);
+        // console.log(result.posts)
         setData(result.posts);
       });
   }, []);
@@ -204,10 +221,40 @@ function Home() {
       });
   };
 
-  const [cmnt, setCmnt] = useState();
-// do comment
+  const [cmnt, setCmnt] = useState(null);
+  // do comment
   const comment = (text, postId) => {
-    fetch("/api/comment", {
+    if (text != null) {
+      fetch("/api/comment", {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
+        },
+        body: JSON.stringify({
+          postId,
+          text,
+        }),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          // console.log(result);
+          const newData = data.map((item) => {
+            if (item._id === result._id) {
+              return result;
+            } else {
+              return item;
+            }
+          });
+          setData(newData);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  // delete comment
+  const deletecomment = (text, postId) => {
+    fetch("/api/uncomment", {
       method: "put",
       headers: {
         "Content-Type": "application/json",
@@ -233,34 +280,6 @@ function Home() {
       .catch((err) => console.log(err));
   };
 
-// delete comment
-const deletecomment = (text, postId) => {
-  fetch("/api/uncomment", {
-    method: "put",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: "Bearer " + localStorage.getItem("jwt"),
-    },
-    body: JSON.stringify({
-      postId,
-      text,
-    }),
-  })
-    .then((res) => res.json())
-    .then((result) => {
-      // console.log(result);
-      const newData = data.map((item) => {
-        if (item._id === result._id) {
-          return result;
-        } else {
-          return item;
-        }
-      });
-      setData(newData);
-    })
-    .catch((err) => console.log(err));
-};
-
   // delete functionality
   const deletePost = (postId) => {
     // console.log("delete garne ho yo post")
@@ -281,12 +300,35 @@ const deletecomment = (text, postId) => {
       });
   };
 
+  // sugestion part
+  const getSomeRandomUser = () => {
+    fetch("http://localhost:5000/api/somerandomuser", {
+      method: "get",
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setSomeUser(data);
+      })
+      .catch((err) => console.log(err));
+  };
+  useEffect(() => {
+    getSomeRandomUser();
+  }, []);
 
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
+  const handleOptionmenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleOptionMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
-    
-
     <div className={classes.Home}>
       <div className={classes.alignCenterpart}>
         <div className={classes.leftPart}>
@@ -295,11 +337,9 @@ const deletecomment = (text, postId) => {
           </div>
 
           {/* main kaam */}
-          
 
           <POFuser />
-        
- 
+
           <div className={classes.leftdown}>
             <div className={classes.alignCenter}>
               {data.map((each) => {
@@ -314,14 +354,48 @@ const deletecomment = (text, postId) => {
                             alt="image not loaded"
                           />
                         }
+                       
                         action={
-                          each.postedBy._id === state._id && (
-                            <IconButton aria-label="settings">
+                          // try for menu start
+                          <>
+                            <Button>
+                              <MoreVertIcon onClick={handleOptionmenu} />
+                            </Button>
+                            <Menu
+                              id="simple-menu"
+                              anchorEl={anchorEl}
+                              keepMounted
+                              open={Boolean(anchorEl)}
+                              onClose={handleOptionMenuClose}
+                            >
+                              <MenuItem onClick={handleOptionMenuClose}>
+                                <Link
+                                  to={`/post/${each._id}`}
+                                  style={{
+                                    textDecoration: "none",
+                                    color: "black",
+                                  }}
+                                >
+                             
+                                  Go to Post
+                                </Link>
+                              </MenuItem>
+                              <MenuItem onClick={handleOptionMenuClose}>
+                                Copy Link
+                              </MenuItem>
+                              <MenuItem onClick={handleOptionMenuClose}>
+                                Report
+                              </MenuItem>
+                              </Menu>
+                              {each.postedBy._id === state._id && (
+                            <MenuItem>
                               <DeleteForeverIcon
                                 onClick={() => deletePost(each._id)}
                               />
-                            </IconButton>
-                          )
+                            </MenuItem>
+                          )}
+                          </>
+                          // try for menu end
                         }
                         title={
                           <Link
@@ -330,7 +404,12 @@ const deletecomment = (text, postId) => {
                                 ? "/profile/" + each.postedBy._id
                                 : "/profile"
                             }
-                            style={{ textDecoration: "none", color: "white" }}
+                            style={{
+                              textDecoration: "none",
+                              color: "black",
+                              fontSize: 22,
+                              textTransform: "capitalize",
+                            }}
                           >
                             {each.postedBy.name}
                           </Link>
@@ -361,7 +440,7 @@ const deletecomment = (text, postId) => {
                             onClick={() => likePost(each._id)}
                           >
                             <FavoriteBorderIcon
-                              style={{ color: "white", fontSize: 40 }}
+                              style={{ color: "gray", fontSize: 40 }}
                             />
                           </IconButton>
                         )}
@@ -374,8 +453,7 @@ const deletecomment = (text, postId) => {
                         style={{
                           marginBottom: 0,
                           textAlign: "left",
-                          padding: 0,
-                          paddingLeft: 10,
+                          padding: "0px 20px ",
                         }}
                       >
                         <Typography>{each.likes.length} likes</Typography>
@@ -388,7 +466,16 @@ const deletecomment = (text, postId) => {
                         </Typography>
                         {each.comments.map((indivisual) => {
                           return (
-                            <div key={indivisual._id} style={{display:"flex",flexDirection:"row", justifyContent:"space-between",alignItems:"center",padding:"0px 30px"}}>
+                            <div
+                              key={indivisual._id}
+                              style={{
+                                display: "flex",
+                                flexDirection: "row",
+                                justifyContent: "space-between",
+                                alignItems: "center",
+                                padding: "0px 30px",
+                              }}
+                            >
                               <h5 style={{ margin: 0, padding: 0 }}>
                                 {indivisual.postedBy.name}
                                 <span
@@ -399,23 +486,27 @@ const deletecomment = (text, postId) => {
                                 >
                                   {indivisual.text}
                                 </span>
-                                </h5>
-                                <div>
-                              {
-                                indivisual.postedBy._id === state._id ?
-                                <HighlightOffIcon onClick={()=>deletecomment(indivisual.text,each._id)} style={{fontSize:20}}/>
-                                :null
-                              }
-                              
-                            </div>
+                              </h5>
+                              <div>
+                                {indivisual.postedBy._id === state._id ? (
+                                  <HighlightOffIcon
+                                    onClick={() =>
+                                      deletecomment(indivisual.text, each._id)
+                                    }
+                                    style={{ fontSize: 20 }}
+                                  />
+                                ) : null}
+                              </div>
                             </div>
                           );
                         })}
+                        <hr />
+
                         <div
                           style={{
                             display: "flex",
                             alignItems: "center",
-                            marginBottom: 0,
+                            margin: 0,
                             padding: 0,
                           }}
                         >
@@ -424,16 +515,24 @@ const deletecomment = (text, postId) => {
                             label="Add a comment"
                             fullWidth
                             value={cmnt}
-                            style={{ margin: 10 }}
+                            style={{ margin: "0px 0px 10px 10px" }}
                             onChange={(e) => setCmnt(e.target.value)}
                           />
-                          <SendIcon
+                          <Typography
                             onClick={(e) => {
                               e.preventDefault();
-                              setCmnt("");
+                              setCmnt(null);
                               comment(cmnt, each._id);
                             }}
-                          />
+                            style={{
+                              marginRight: 20,
+                              color: "tomato",
+                              fontWeight: "bold",
+                              cursor: "pointer",
+                            }}
+                          >
+                            Post
+                          </Typography>
                         </div>
                       </CardContent>
                     </Card>
@@ -449,63 +548,168 @@ const deletecomment = (text, postId) => {
           <div className={classes.centeralign}>
             <div className={classes.aafnopro}>
               <img
-                // src={state.pic}
+                src={state ? state.pic : "loading"}
                 alt="image not loaded"
-                style={{ height: 70, width: 70, borderRadius: "50%",objectFit:"center",alignSelf:"center" }}
+                style={{
+                  height: 70,
+                  width: 70,
+                  borderRadius: "50%",
+                  objectFit: "center",
+                  alignSelf: "center",
+                }}
               />
-              <div className={classes.aafnodetail}>
-                <h3>{state.name}</h3>
-                <p>{state.email}</p>
-              </div>
+              <Link to={"/profile"} style={{ textDecoration: "none" }}>
+                <div className={classes.aafnodetail}>
+                  <h3
+                    style={{
+                      textDecoration: "none",
+                      color: "black",
+                      textAlign: "left",
+                    }}
+                  >
+                    {state ? state.name : "loading"}
+                  </h3>
+                  <p style={{ textDecoration: "none", color: "black" }}>
+                    {state ? state.email : "loading"}
+                  </p>
+                </div>
+              </Link>
             </div>
             <div className={classes.suggestionpart}>
               <div className={classes.sugline}>
-                <h2>SOME SUGGESTION FOR YOU </h2>
-                <p>SEE ALL</p>
+                <h2 style={{ margin: 0 }}>SUGGESTIONS FOR YOU </h2>
               </div>
               <hr />
 
               <div className={classes.peoplesug}>
-                <div>
-                  <img
-                    alt="not loaded"
-                    src="https://images6.fanpop.com/image/photos/41400000/Katherine-Langford-actresses-41401047-886-886.jpg"
-                  />
-                  <h3>Katherine Langford</h3>
-                  <p>Follow</p>
-                </div>
-                <div>
-                  <img
-                    alt="not loaded"
-                    src="https://images2.fanpop.com/images/photos/7000000/Scarlett-Johansson-actresses-7093421-810-1222.jpg"
-                  />
-                  <h3>Scarlett Johansson</h3>
-                  <p>Follow</p>
-                </div>
-                <div>
-                  <img
-                    alt="not loaded"
-                    src="https://images6.fanpop.com/image/photos/41400000/Katherine-Langford-actresses-41401047-886-886.jpg"
-                  />
-                  <h3>Katherine Langford</h3>
-                  <p>Follow</p>
-                </div>
-                <div>
-                  <img
-                    alt="not loaded"
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Andrew_Garfield_by_Gage_Skidmore_%28cropped%29.jpg/800px-Andrew_Garfield_by_Gage_Skidmore_%28cropped%29.jpg"
-                  />
-                  <h3>Andrew Garfield</h3>
-                  <p>Follow</p>
-                </div>
+                {someUser?.map((oneuser) => {
+                  return (
+                    <>
+                      {oneuser._id == state._id ? null : (
+                        <div
+                          className={classes.centeralign}
+                          style={{
+                            backgroundColor: "#f2f2f2",
+                            borderRadius: 20,
+                            width: "100%",
+                            marginBottom: 20,
+                            padding: "10px 0px",
+                          }}
+                        >
+                          <div className={classes.aafnopro}>
+                            <img
+                              src={oneuser.pic}
+                              alt="image not loaded"
+                              style={{
+                                height: 60,
+                                width: 60,
+                                borderRadius: "50%",
+                                objectFit: "center",
+                                alignSelf: "center",
+                              }}
+                            />
+                            <div
+                              className={classes.aafnodetail}
+                              style={{ width: "80%" }}
+                            >
+                              <Link
+                                to={
+                                  oneuser._id != state._id
+                                    ? "/profile/" + oneuser._id
+                                    : "/profile"
+                                }
+                                style={{
+                                  textDecoration: "none",
+                                  width: "70%",
+                                  color: "black",
+                                }}
+                              >
+                                <h3 style={{ margin: 0 }}>{oneuser.name} </h3>
+                                <p style={{ margin: 0 }}>{oneuser.email} </p>
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })}
+              </div>
+
+              <Button
+                variant="outlined"
+                color="secondary"
+                style={{ float: "left" }}
+              >
+                SEE ALL
+              </Button>
+            </div>
+
+            <div
+              style={{
+                marginTop: "40px",
+                color: "gray",
+                width: "fitContent",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                }}
+              >
+                <p className={classes.ptext}>
+                  <a href="#">About</a>
+                </p>
+                <p className={classes.ptext}>
+                  <a href="#">Jobs</a>
+                </p>
+
+                <p className={classes.ptext}>
+                  <a href="#">Help</a>
+                </p>
+                <p className={classes.ptext}>
+                  <a href="#">Locations</a>
+                </p>
+
+                <p className={classes.ptext}>
+                  <a href="#">Terms</a>
+                </p>
+
+                <p className={classes.ptext}>
+                  <a href="#">Policy</a>
+                </p>
+                <p className={classes.ptext}>
+                  <a href="#">Hashtags</a>
+                </p>
+
+                <p className={classes.ptext}>
+                  <a href="#">Top Account</a>
+                </p>
+
+                <p className={classes.ptext}>
+                  <a href="#">Languages</a>
+                </p>
+              </div>
+              <div
+                className="copyright"
+                style={{
+                  marginTop: 20,
+                  fontSize: 14,
+                  fontFamily: "poppins",
+                  textTransform: "uppercase",
+                }}
+              >
+                <h3>
+                  {" "}
+                  &#169;{new Date().getFullYear()} initGram From initDevelops
+                </h3>
               </div>
             </div>
-            <div></div>
           </div>
         </div>
       </div>
     </div>
-            
   );
 }
 
