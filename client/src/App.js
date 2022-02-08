@@ -1,4 +1,4 @@
-import React, { useEffect, createContext, useReducer, useContext } from "react";
+import React, { useState,useEffect, createContext, useReducer, useContext } from "react";
 
 import "./App.css";
 import Navbar from "./components/Navbar";
@@ -17,11 +17,14 @@ export const UserContext = createContext();
 const Routing = () => {
   const history = useHistory();
   const { dispatch } = useContext(UserContext);
+  const [loggedIn, setLoggedIn] = useState(null);
 
   useEffect(() => {
     // const user = localStorage.getItem("user");
     const user = JSON.parse(localStorage.getItem("user"));
     // console.log(typeof(user))
+    setLoggedIn(Boolean(user));
+
     if (user) {
       dispatch({ type: "USER", payload: user });
       history.push("/");
@@ -31,13 +34,21 @@ const Routing = () => {
   }, []);
   return (
     <Switch>
-      <Route exact path="/" component={Home} />
+     { loggedIn ?
+     <>
+      <Route exact path="/" component={ Home  } />
       <Route exact path="/profile" component={Profile} />
       <Route exact path="/profile/:userId" component={UserProfile} />
       <Route exact path="/createpost" component={CreatePost} />
+      <Route exact path="/post/:postId" component={SinglePost} />
+      </>
+      :
+      <>
+      
       <Route exact path="/signin" component={Login} />
       <Route exact path="/signup" component={Register} />
-      <Route exact path="/post/:postId" component={SinglePost} />
+      </>
+     }
     </Switch>
   );
 };

@@ -328,6 +328,9 @@ function Home() {
     setAnchorEl(null);
   };
 
+const[rfsth,setRfsth]=useState()
+
+
   return (
     <div className={classes.Home}>
       <div className={classes.alignCenterpart}>
@@ -345,198 +348,203 @@ function Home() {
               {data.map((each) => {
                 return (
                   <>
-                    <Card className={classes.root} key={each._id}>
-                      <CardHeader
-                        avatar={
-                          <img
-                            className={classes.proimage}
-                            src={each.postedBy.pic}
-                            alt="image not loaded"
-                          />
-                        }
-                       
-                        action={
-                          // try for menu start
-                          <>
-                            <Button>
-                              <MoreVertIcon onClick={handleOptionmenu} />
-                            </Button>
-                            <Menu
-                              id="simple-menu"
-                              anchorEl={anchorEl}
-                              keepMounted
-                              open={Boolean(anchorEl)}
-                              onClose={handleOptionMenuClose}
-                            >
-                              <MenuItem onClick={handleOptionMenuClose}>
-                                <Link
-                                  to={`/post/${each._id}`}
-                                  style={{
-                                    textDecoration: "none",
-                                    color: "black",
-                                  }}
-                                >
-                             
-                                  Go to Post
-                                </Link>
-                              </MenuItem>
-                              <MenuItem onClick={handleOptionMenuClose}>
-                                Copy Link
-                              </MenuItem>
-                              <MenuItem onClick={handleOptionMenuClose}>
-                                Report
-                              </MenuItem>
+                    {each.postedBy._id == state._id ? null : (
+                      <Card className={classes.root} key={each._id}>
+                        <CardHeader
+                          avatar={
+                            <img
+                              className={classes.proimage}
+                              src={each.postedBy.pic}
+                              alt="image not loaded"
+                            />
+                          }
+                          action={
+                            // try for menu start
+                            <>
+                              <Button onClick={()=>setRfsth(each._id)}>
+                                <MoreVertIcon onClick={handleOptionmenu} />
+                              </Button>
+                              <Menu
+                                id="simple-menu"
+                                anchorEl={anchorEl}
+                                keepMounted
+                                open={Boolean(anchorEl)}
+                                onClose={handleOptionMenuClose}
+                              >
+                                <MenuItem onClick={handleOptionMenuClose}>
+                                  <Link
+                                    to={`/post/${rfsth}`}
+                                    // to={{
+                                    //   pathname: `/post/${each._id}`,
+                                    //   // state: { yo:"k vayo" }
+                                    //   state: { postid: each._id, postof: each.postedBy.name }
+                                    // }}
+                                    style={{
+                                      textDecoration: "none",
+                                      color: "black",
+                                    }}
+                                    // onClick={alert("First follow the user")}
+                                  >
+                                    Go to Post
+                                  </Link>
+                                </MenuItem>
+                                <MenuItem onClick={handleOptionMenuClose}>
+                                  Copy Link
+                                </MenuItem>
+                                <MenuItem onClick={handleOptionMenuClose}>
+                                  Report
+                                </MenuItem>
                               </Menu>
                               {each.postedBy._id === state._id && (
-                            <MenuItem>
-                              <DeleteForeverIcon
-                                onClick={() => deletePost(each._id)}
-                              />
-                            </MenuItem>
-                          )}
-                          </>
-                          // try for menu end
-                        }
-                        title={
-                          <Link
-                            to={
-                              each.postedBy._id != state._id
-                                ? "/profile/" + each.postedBy._id
-                                : "/profile"
-                            }
-                            style={{
-                              textDecoration: "none",
-                              color: "black",
-                              fontSize: 22,
-                              textTransform: "capitalize",
-                            }}
-                          >
-                            {each.postedBy.name}
-                          </Link>
-                        }
-                        subheader={new Date(each.createdAt).toDateString()}
-                      />
-                      <CardMedia
-                        className={classes.media}
-                        image={each.photo}
-                        title={
-                          each.postedBy.name + " writes about " + each.title
-                        }
-                      />
-
-                      <CardActions style={{ marginBottom: 0, padding: 0 }}>
-                        {each.likes.includes(state._id) ? (
-                          <IconButton
-                            aria-label="add to favorites"
-                            onClick={() => unLikePost(each._id)}
-                          >
-                            <FavoriteIcon
-                              style={{ color: "red", fontSize: 40 }}
-                            />
-                          </IconButton>
-                        ) : (
-                          <IconButton
-                            aria-label="add to favorites"
-                            onClick={() => likePost(each._id)}
-                          >
-                            <FavoriteBorderIcon
-                              style={{ color: "gray", fontSize: 40 }}
-                            />
-                          </IconButton>
-                        )}
-
-                        <IconButton aria-label="share">
-                          <ShareIcon />
-                        </IconButton>
-                      </CardActions>
-                      <CardContent
-                        style={{
-                          marginBottom: 0,
-                          textAlign: "left",
-                          padding: "0px 20px ",
-                        }}
-                      >
-                        <Typography>{each.likes.length} likes</Typography>
-
-                        <Typography component="h3">
-                          {each.title}
-                          <Typography component="p" style={{ color: "gray" }}>
-                            {each.body}
-                          </Typography>
-                        </Typography>
-                        {each.comments.map((indivisual) => {
-                          return (
-                            <div
-                              key={indivisual._id}
+                                <MenuItem>
+                                  <DeleteForeverIcon
+                                    onClick={() => deletePost(each._id)}
+                                  />
+                                </MenuItem>
+                              )}
+                            </>
+                            // try for menu end
+                          }
+                          title={
+                            <Link
+                              to={
+                                each.postedBy._id != state._id
+                                  ? "/profile/" + each.postedBy._id
+                                  : "/profile"
+                              }
                               style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                                padding: "0px 30px",
+                                textDecoration: "none",
+                                color: "black",
+                                fontSize: 22,
+                                textTransform: "capitalize",
                               }}
                             >
-                              <h5 style={{ margin: 0, padding: 0 }}>
-                                {indivisual.postedBy.name}
-                                <span
-                                  style={{
-                                    fontWeight: "400",
-                                    marginLeft: 10,
-                                  }}
-                                >
-                                  {indivisual.text}
-                                </span>
-                              </h5>
-                              <div>
-                                {indivisual.postedBy._id === state._id ? (
-                                  <HighlightOffIcon
-                                    onClick={() =>
-                                      deletecomment(indivisual.text, each._id)
-                                    }
-                                    style={{ fontSize: 20 }}
-                                  />
-                                ) : null}
-                              </div>
-                            </div>
-                          );
-                        })}
-                        <hr />
+                              {each.postedBy.name}
+                            </Link>
+                          }
+                          subheader={new Date(each.createdAt).toDateString()}
+                        />
+                        <CardMedia
+                          className={classes.media}
+                          image={each.photo}
+                          title={
+                            each.postedBy.name + " writes about " + each.title
+                          }
+                        />
 
-                        <div
+                        <CardActions style={{ marginBottom: 0, padding: 0 }}>
+                          {each.likes.includes(state._id) ? (
+                            <IconButton
+                              aria-label="add to favorites"
+                              onClick={() => unLikePost(each._id)}
+                            >
+                              <FavoriteIcon
+                                style={{ color: "red", fontSize: 40 }}
+                              />
+                            </IconButton>
+                          ) : (
+                            <IconButton
+                              aria-label="add to favorites"
+                              onClick={() => likePost(each._id)}
+                            >
+                              <FavoriteBorderIcon
+                                style={{ color: "gray", fontSize: 40 }}
+                              />
+                            </IconButton>
+                          )}
+
+                          <IconButton aria-label="share">
+                            <ShareIcon />
+                          </IconButton>
+                        </CardActions>
+                        <CardContent
                           style={{
-                            display: "flex",
-                            alignItems: "center",
-                            margin: 0,
-                            padding: 0,
+                            marginBottom: 0,
+                            textAlign: "left",
+                            padding: "0px 20px ",
                           }}
                         >
-                          <TextField
-                            id="standard-basic"
-                            label="Add a comment"
-                            fullWidth
-                            value={cmnt}
-                            style={{ margin: "0px 0px 10px 10px" }}
-                            onChange={(e) => setCmnt(e.target.value)}
-                          />
-                          <Typography
-                            onClick={(e) => {
-                              e.preventDefault();
-                              setCmnt(null);
-                              comment(cmnt, each._id);
-                            }}
+                          <Typography>{each.likes.length} likes</Typography>
+
+                          <Typography component="h3">
+                            {each.title}
+                            <Typography component="p" style={{ color: "gray" }}>
+                              {each.body}
+                            </Typography>
+                          </Typography>
+                          {each.comments.map((indivisual) => {
+                            return (
+                              <div
+                                key={indivisual._id}
+                                style={{
+                                  display: "flex",
+                                  flexDirection: "row",
+                                  justifyContent: "space-between",
+                                  alignItems: "center",
+                                  padding: "0px 30px",
+                                }}
+                              >
+                                <h5 style={{ margin: 0, padding: 0 }}>
+                                  {indivisual.postedBy.name}
+                                  <span
+                                    style={{
+                                      fontWeight: "400",
+                                      marginLeft: 10,
+                                    }}
+                                  >
+                                    {indivisual.text}
+                                  </span>
+                                </h5>
+                                <div>
+                                  {indivisual.postedBy._id === state._id ? (
+                                    <HighlightOffIcon
+                                      onClick={() =>
+                                        deletecomment(indivisual.text, each._id)
+                                      }
+                                      style={{ fontSize: 20 }}
+                                    />
+                                  ) : null}
+                                </div>
+                              </div>
+                            );
+                          })}
+                          <hr />
+
+                          <div
                             style={{
-                              marginRight: 20,
-                              color: "tomato",
-                              fontWeight: "bold",
-                              cursor: "pointer",
+                              display: "flex",
+                              alignItems: "center",
+                              margin: 0,
+                              padding: 0,
                             }}
                           >
-                            Post
-                          </Typography>
-                        </div>
-                      </CardContent>
-                    </Card>
-                    {/*  */}
+                            <TextField
+                              id="standard-basic"
+                              label="Add a comment"
+                              fullWidth
+                              value={cmnt}
+                              style={{ margin: "0px 0px 10px 10px" }}
+                              onChange={(e) => setCmnt(e.target.value)}
+                            />
+                            <Typography
+                              onClick={(e) => {
+                                e.preventDefault();
+                                setCmnt(null);
+                                comment(cmnt, each._id);
+                              }}
+                              style={{
+                                marginRight: 20,
+                                color: "tomato",
+                                fontWeight: "bold",
+                                cursor: "pointer",
+                              }}
+                            >
+                              Post
+                            </Typography>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
                   </>
                 );
               })}

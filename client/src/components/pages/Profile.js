@@ -42,15 +42,30 @@ function Content1(data) {
     <div className="mygallery">
       {data.data.map((each) => {
                       return (
-                        <Link
-                        to={`/post/${each._id}`}
-                        // style={{
-                        //   textDecoration: "none",
-                        //   color: "black",
-                        // }}
-                      >
-                      <img src={each.photo} style={{width: "32%"}} alt="photo not loaded" key={each._id} />;
-      </Link>
+      //                   <Link
+      //                   to={`/post/${each._id}`}
+      //                   // style={{
+      //                   //   textDecoration: "none",
+      //                   //   color: "black",
+      //                   // }}
+      //                 >
+      //                 <img src={each.photo} style={{width: "32%"}} alt="photo not loaded" key={each._id} />;
+      // </Link>
+      <div class="gfg">
+                  <img src={each.photo} style={{height:250,width:400,borderRadius:10,boxShadow:"2px 2px 1px 2px gray"}}/>
+                  <h3 class="first-txt">
+                      {each.title}
+                  </h3>
+                    
+                  <Link
+                      to={`/post/${each._id}`}
+                     
+                     >
+                  <h3 class="second-txt">
+                      View full size
+                  </h3>
+                  </Link>
+              </div>
       )
       })}
     </div>

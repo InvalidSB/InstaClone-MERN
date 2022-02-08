@@ -164,21 +164,22 @@ function UserProfile() {
               <div className="mygallery">
                 {userProfile.posts.map((each) => {
                   return (
-                    <Link
-                    to={`/post/${each._id}`}
-                    // style={{
-                    //   textDecoration: "none",
-                    //   color: "black",
-                    // }}
-                  >
-                    <img
-                      src={each.photo}
-                      alt="photo not loaded"
-                      key={each._id}
-    
-                      style={{width: "32%"}}
-                    />
-                    </Link>
+                  
+                  <div class="gfg" key={each._id}>
+                  <img src={each.photo} style={{height:250,width:400,borderRadius:10,boxShadow:"2px 2px 1px 2px gray"}}/>
+                  <h3 class="first-txt">
+                      {each.title}
+                  </h3>
+                    
+                  <Link
+                      to={`/post/${each._id}`}
+                     
+                     >
+                  <h3 class="second-txt">
+                      View full size
+                  </h3>
+                  </Link>
+              </div>
                   );
                 })}
               </div>

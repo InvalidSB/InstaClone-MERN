@@ -238,7 +238,10 @@ function POFuser() {
                       >
                         <MenuItem onClick={handleOptionMenuClose}>
                           <Link
-                            to={`/post/${each._id}`}
+                            to={{
+                              pathname: `/post/${each._id}`,
+                              state: { postid: each._id, postof: each.postedBy.name }
+                            }}
                             style={{
                               textDecoration: "none",
                               color: "black",

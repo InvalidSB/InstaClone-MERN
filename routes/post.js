@@ -32,8 +32,15 @@ router.post(
   }
 );
 
+// all post of non following user
 router.get("/allposts", RequireLogin, (req, res) => {
-  PostModel.find({})
+  PostModel.find({
+    postedBy: {
+        // $nin: [req.user._id],//mero id hunu vayena, ani mero following ma pani unuvayena
+        $nin:req.user.following
+      
+    },
+  })
     .populate("postedBy", "_id name email pic")
     .populate("comments.postedBy", "_id name ")
     .sort("-createdAt")
@@ -88,6 +95,7 @@ router.put("/unlikepost", RequireLogin, (req, res) => {
 });
 
 router.put("/comment", RequireLogin, (req, res) => {
+  console.log(req.body)
   const comment = {
     text: req.body.text,
     postedBy: req.user._id,
@@ -137,7 +145,7 @@ router.get("/singlepost/:postId", RequireLogin, (req, res) => {
     .populate("comments.postedBy", "_id name ")
     
     .then(onepost => {
-      res.json( {onepost} );
+      res.json( onepost );
     })
     .catch((err) => console.log(err));
 });

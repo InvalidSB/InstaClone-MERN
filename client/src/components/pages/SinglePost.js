@@ -7,8 +7,9 @@ import CardActions from "@material-ui/core/CardActions";
 import FavoriteIcon from "@material-ui/icons/Favorite";
 import FavoriteBorderIcon from "@material-ui/icons/FavoriteBorder";
 import ShareIcon from "@material-ui/icons/Share";
-import { useHistory } from "react-router-dom";
+import { useHistory,useLocation } from "react-router-dom";
 import { UserContext } from "../../App";
+import HighlightOffIcon from "@material-ui/icons/HighlightOff";
 
 import IconButton from "@material-ui/core/IconButton";
 
@@ -61,6 +62,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function SinglePost({ match }) {
+
+
+  let location = useLocation();
+  console.log(location)
+
+
+
+
   const classes = useStyles();
   const history = useHistory();
   const { state } = useContext(UserContext);
@@ -74,160 +83,186 @@ const[createdAt,setCreatedAt]=useState('')
 const[likes,setLikes]=useState([])
 const[comments,setComments]=useState([])
 const[postedBy,setPostedBy]=useState([])
+
+const fetchPost =  () => {
+  fetch(`/api/singlepost/${match.params.postId}`, {
+   method: "get",
+   headers: {
+     Authorization: "Bearer " + localStorage.getItem("jwt"),
+   },
+ })
+   .then(res=>res.json())
+   .then((data) => {
+     setData(data)
+     console.log(data)
+      setTitle(data.title)
+  setPhoto(data.photo)
+  setBody(data.body)
+  setLikes(data.likes)
+  setComments(data.comments)
+    setCreatedAt(data.createdAt)
+  setPostedBy(data.postedBy)
+    
+   })
+   .catch((err) => {
+     console.log("the post is not being fetched",err);
+   });
+};
+
+
+
   useEffect(() => {
-    const fetchPost = async () => {
-      fetch(`/api/singlepost/${match.params.postId}`, {
-        method: "get",
-        headers: {
-          Authorization: "Bearer " + localStorage.getItem("jwt"),
-        },
-      })
-        .then(res=>res.json())
-        .then((data) => {
-          setData(data)
-          
-          console.log(data);
-          setTitle(data.title)
-          setPhoto(data.photo)
-          setBody(data.body)
-          setLikes(data.likes)
-          setComments(data.comments)
-          setCreatedAt(data.createdAt)
-          setPostedBy(data.postedBy)
-         
-        })
-        .catch(() => {
-          console.log("the post is not being fetched");
-        });
-    };
     fetchPost();
-  }, []);
+  }, [data]);
+
+ 
+  // console.log("This is body",data.body)
+ 
+
 
 
 
 
 
   // like the post
-  // const likePost = (id) => {
-  //   fetch("/api/likepost", {
-  //     method: "put",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: "Bearer " + localStorage.getItem("jwt"),
-  //     },
-  //     body: JSON.stringify({
-  //       postId: id,
-  //     }),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((result) => {
-  //       const newData = data.map((item) => {
-  //         if (item._id === result._id) {
-  //           return result;
-  //         } else {
-  //           return item;
-  //         }
-  //       });
-  //       setData(newData);
-  //     });
-  // };
-  // // unlike the post
-  // const unLikePost = (id) => {
-  //   fetch("/api/unlikepost", {
-  //     method: "put",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: "Bearer " + localStorage.getItem("jwt"),
-  //     },
-  //     body: JSON.stringify({
-  //       postId: id,
-  //     }),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((result) => {
-  //       const newData = data.map((item) => {
-  //         if (item._id === result._id) {
-  //           return result;
-  //         } else {
-  //           return item;
-  //         }
-  //       });
-  //       setData(newData);
-  //     });
-  // };
-
-  // const [cmnt, setCmnt] = useState(null);
-  // // do comment
-  // const comment = (text, postId) => {
-  //   if (text != null) {
-  //     fetch("/api/comment", {
-  //       method: "put",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Authorization: "Bearer " + localStorage.getItem("jwt"),
-  //       },
-  //       body: JSON.stringify({
-  //         postId,
-  //         text,
-  //       }),
-  //     })
-  //       .then((res) => res.json())
-  //       .then((result) => {
-  //         // console.log(result);
-  //         const newData = data.map((item) => {
-  //           if (item._id === result._id) {
-  //             return result;
-  //           } else {
-  //             return item;
-  //           }
-  //         });
-  //         setData(newData);
-  //       })
-  //       .catch((err) => console.log(err));
-  //   }
-  // };
-
-  // // delete comment
-  // const deletecomment = (text, postId) => {
-  //   fetch("/api/uncomment", {
-  //     method: "put",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: "Bearer " + localStorage.getItem("jwt"),
-  //     },
-  //     body: JSON.stringify({
-  //       postId,
-  //       text,
-  //     }),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((result) => {
-  //       // console.log(result);
-  //       const newData = data.map((item) => {
-  //         if (item._id === result._id) {
-  //           return result;
-  //         } else {
-  //           return item;
-  //         }
-  //       });
-  //       setData(newData);
-  //     })
-  //     .catch((err) => console.log(err));
-  // };
+  const likePost = (id) => {
+    fetch("/api/likepost", {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({
+        postId: id,
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        // const newData = data.map((item) => {
+        //   if (item._id === result._id) {
+        //     return result;
+        //   } else {
+        //     return item;
+        //   }
+        // });
+        
+        const newData=()=>{
+          if (data._id === result._id) {
+             return result;
+           } else {
+             return data;
+           }
+        }
 
 
+        setData(newData);
+      });
+  };
+  // unlike the post
+  const unLikePost = (id) => {
+    fetch("/api/unlikepost", {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({
+        postId: id,
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        const newData=()=>{
+          if (data._id === result._id) {
+             return result;
+           } else {
+             return data;
+           }
+        }
+        setData(newData);
+      });
+  };
+
+  const [cmnt, setCmnt] = useState(null);
+  // do comment
+  const comment = (text, postId) => {
+    if (text != null) {
+      setCmnt('');
+      fetch("/api/comment", {
+        method: "put",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("jwt"),
+        },
+        body: JSON.stringify({
+          postId,
+          text,
+        }),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          // console.log(result);
+          const newData=()=>{
+            if (data._id === result._id) {
+               return result;
+             } else {
+               return data;
+             }
+          }
+          setData(newData);
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
+  // delete comment
+  const deletecomment = (text, postId) => {
+    fetch("/api/uncomment", {
+      method: "put",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+      },
+      body: JSON.stringify({
+        postId,
+        text,
+      }),
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        // console.log(result);
+        const newData=()=>{
+          if (data._id === result._id) {
+             return result;
+           } else {
+             return data;
+           }
+        }
+        setData(newData);
+      })
+      .catch((err) => console.log(err));
+  };
+
+if (!data  ) return (
+  <h1 style={{color:"tomato",fontSize:100}}>Loading......</h1>
+)
 
 
   return (
+
     <div style={{ paddingTop: 100, position: "relative" }}>
+      <p>If this post  is not the post that you want to visit then open it from postedBy user's profile</p>
       <div className={classes.adjust}>
         <div className={classes.flexpart}>
+          {/* <img src={photo}/> */}
           <CardMedia
             className={classes.media}
             image={photo}
             // image={"https://www.smfigure.com/public/uploads/news-261.webp"}
             title={
-                postedBy.name + " writes about " + title
+              postedBy ? 
+              postedBy.name + " writes about " + title:
+              "...."
               
             }
           />
@@ -257,6 +292,7 @@ const[postedBy,setPostedBy]=useState([])
            
             <div className={classes.innercomp}>
               <hr />
+              {comments ?
               <div className={classes.comments}>
                 {comments.map((indivisual) => {
                           return (
@@ -281,17 +317,26 @@ const[postedBy,setPostedBy]=useState([])
                       {indivisual.text}
                     </span>
                   </h5>
+                  {indivisual.postedBy._id === state._id ? (
+                                    <HighlightOffIcon
+                                      onClick={() =>
+                                        deletecomment(indivisual.text, match.params.postId)
+                                      }
+                                      style={{ fontSize: 20 }}
+                                    />
+                                  ) : null}
                 </div>
                 );
-                            })} 
+                            })}  
               </div>
+              :null}
               <div className={classes.downpart}>
                 <div >
                   <CardActions style={{ marginBottom: 0, padding: 0 }}>
-                  {likes.includes(state._id) ? (
+                  {data.likes.includes(state._id) ? (
                           <IconButton
                             aria-label="add to favorites"
-                            // onClick={() => unLikePost(match.params.postId)}
+                            onClick={() => unLikePost(match.params.postId)}
                           >
                             <FavoriteIcon
                               style={{ color: "red", fontSize: 40 }}
@@ -300,7 +345,7 @@ const[postedBy,setPostedBy]=useState([])
                         ) : (
                           <IconButton
                             aria-label="add to favorites"
-                            // onClick={() => likePost(match.params.postId)}
+                            onClick={() => likePost(match.params.postId)}
                           >
                             <FavoriteBorderIcon
                               style={{ color: "gray", fontSize: 40 }}
@@ -317,11 +362,11 @@ const[postedBy,setPostedBy]=useState([])
                 <div style={{ margin: 0, padding: "0px 30px" }}>
                   <p style={{ textAlign: "left", margin: 5, padding: 0 }}>
                     {/* Liked by you & 2M others */}
-                    {likes.length} likes 
+                    {data.likes.length} likes 
                   </p>
                 </div>
                 <p style={{ textAlign: "left",margin: 5, padding: 0,color:"teal" }}>{new Date(createdAt).toDateString()}</p>
-                </div>{/* <hr /> */}
+                </div>
                 <div
                   style={{
                     display: "flex",
@@ -337,15 +382,15 @@ const[postedBy,setPostedBy]=useState([])
                     id="standard-basic"
                     label="Add a comment"
                     fullWidth
-                    // value={cmnt}
+                    value={cmnt}
                     style={{ margin: "0px 0px 10px 10px" }}
-                    // onChange={(e) => setCmnt(e.target.value)}
+                    onChange={(e) => setCmnt(e.target.value)}
                   />
                   <Typography
                     onClick={(e) => {
                       e.preventDefault();
-                      //   setCmnt(null);
-                      //   comment(cmnt, each._id);
+                        
+                        comment(cmnt, match.params.postId);
                     }}
                     style={{
                       marginRight: 20,
@@ -365,6 +410,7 @@ const[postedBy,setPostedBy]=useState([])
 
       
     </div>
+   
   );
 }
 
